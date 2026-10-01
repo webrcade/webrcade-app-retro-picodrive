@@ -199,6 +199,7 @@ export class EmulatorPauseScreen extends Component {
           <SettingsEditor
             emulator={emulator}
             onClose={closeCallback}
+            showOnScreenControls={true}
           />
         ) : null}
         {mode === ModeEnum.CHEATS ? (
