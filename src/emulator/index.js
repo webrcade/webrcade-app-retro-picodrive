@@ -1,10 +1,10 @@
 import {
   APP_TYPE_KEYS,
-  RetroAppWrapper,
+  BasicRetroAppWrapper,
   LOG
 } from '@webrcade/app-common';
 
-export class Emulator extends RetroAppWrapper {
+export class Emulator extends BasicRetroAppWrapper {
 
   GAME_SRAM_NAME = 'game.srm';
   SAVE_NAME = 'sav';
@@ -62,6 +62,30 @@ export class Emulator extends RetroAppWrapper {
 
   getScriptUrl() {
     return 'js/picodrive_libretro.js';
+  }
+
+  onFrame() {
+    // Touch/mouse/keyboard interaction detection + on-screen touch overlay
+    // gating is inherited from BasicRetroAppWrapper. This app has no other
+    // per-frame work of its own.
+    super.onFrame();
+  }
+
+  // Base class default pauses on any tap anywhere on screen -- redundant
+  // (and disruptive) now that there's a dedicated Pause button in the
+  // touch overlay. Same override every other TouchOverlay app uses for
+  // the same reason.
+  createTouchListener() {}
+
+  // WRC - Genesis/32X's real controller has no analog trigger at all (the
+  // 6-button pad's extra face buttons map to LBUMP/RBUMP above, not
+  // LTRIG/RTRIG), so there's no real extended-hold function that could
+  // collide with the LT+LA pause combo - see docs/escape-hack-audit.md's
+  // decision rule. Previously left at the inherited `true` default, which
+  // meant holding the pause combo itself for more than ~1s would silently
+  // fail to open Pause.
+  isEscapeHackEnabled() {
+    return false;
   }
 
   getPort2() {
